@@ -1,0 +1,28 @@
+import numpy as np
+import pandas as pd
+
+np.random.seed(42)
+n = 10000  #пользователи
+
+# Группа A — конверсия 10%
+group_a = np.random.binomial(1, 0.10, n // 2)
+
+# Группа B (тест) — конверсия 12%
+group_b = np.random.binomial(1, 0.12, n // 2)
+
+df = pd.DataFrame({
+    'user_id': range(n),
+    'group': ['A'] * (n // 2) + ['B'] * (n // 2),
+    'converted': np.concatenate([group_a, group_b]),
+    'device': np.random.choice(['mobile', 'desktop'], n, p=[0.7, 0.3]),
+    'country': np.random.choice(['RU', 'KZ', 'BY'], n, p=[0.8, 0.15, 0.05]),
+    'session_duration': np.random.randint(30, 600, n)
+})
+
+df.to_csv('ab_test.csv', index=False, encoding='utf-8')
+print("Файл ab_test.csv создан")
+print(f"Размер: {df.shape}")
+print(f"\nПервые 5 строк:")
+print(df.head())
+print(f"\nКонверсия по группам:")
+print(df.groupby('group')['converted'].mean())
